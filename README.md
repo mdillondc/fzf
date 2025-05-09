@@ -68,7 +68,7 @@ After installation, you can immediately:
 1. Navigate files and directories with `f`
 2. Open files in Zed editor with `fz`
 3. Open files in Neovim with `fv`
-4. Search file contents with `fSearchZed query`
+4. Search file contents with `fSearchZed`
 5. Kill processes with `fKill`
 
 Run `fHelp` to view all available commands and shortcuts.
