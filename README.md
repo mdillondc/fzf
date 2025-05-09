@@ -70,6 +70,7 @@ After installation, you can immediately:
 3. Open files in Neovim with `fv`
 4. Search file contents with `fSearchZed`
 5. Kill processes with `fKill`
+6. Run `fHelp` for more options than listed in README.md (`fHelp` will always be more up-to-date than README.md)
 
 Run `fHelp` to view all available commands and shortcuts.
 
