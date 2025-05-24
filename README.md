@@ -57,7 +57,7 @@ For Zed, download from the [official website](https://zed.dev) as it's not in re
 
 4. Generate the initial cache:
    ```
-   fCache
+   fc
    ```
    This might take a few minutes on the first run, depending on the size of your home directory.
 
@@ -71,11 +71,11 @@ After installation, you can immediately:
 2. Open files with editors:
    - In Zed editor with `fz`
    - In Neovim with `fv`
-3. Search file contents with `fSearchZed`
-4. Kill processes with `fKill`
-5. Run `fHelp` for more options than listed in README.md (`fHelp` will always be more up-to-date than README.md)
+3. Search file contents with `fsz`
+4. Kill processes with `fk`
+5. Run `fh` for more options than listed in README.md (`fh` will always be more up-to-date than README.md)
 
-Run `fHelp` to view all available commands and shortcuts.
+Run `fh` to view all available commands and shortcuts.
 
 ```bash
 =======================================================
@@ -86,46 +86,20 @@ USAGE: fzf.sh [COMMAND]
 
 COMMAND                   ALIAS                DESCRIPTION
 -------                   -----                -----------
---help                    fHelp                Show this help message
---update-cache            fCache               Update the file/directory path cache
+--help                    fh                   Show this help message
+--update-cache            fc                   Update the file/directory path cache
 --open                    f                    Fuzzy find and open files with default system app or cd to directory
 --open-recursive          fr                   Fuzzy find and open files recursively from current directory
 --open-zed                fz                   Fuzzy find and open files with Zed
 --open-nvim               fv                   Fuzzy find and open files with Neovim
 --path                    fp                   Return a selected path from fuzzy finder
---kill                    fKill                List and kill any process
---search-zed              fSearchZed           Search file contents and open in Zed
---search-nvim             fSearchVim           Search file contents and open in Neovim
---search-rel-zed          fSearchRelZed        Search recursively in current directory, open in Zed
---search-rel-nvim         fSearchRelVim        Search recursively in current directory, open in Neovim
+--kill                    fk                   List and kill any process
+--search-zed              fsz                  Search file contents and open in Zed
+--search-nvim             fsv                  Search file contents and open in Neovim
+--search-rel-zed          fsrz                 Search recursively in current directory, open in Zed
+--search-rel-nvim         fsrv                 Search recursively in current directory, open in Neovim
 ```
 
-## Usage Examples
-
-### Navigate and Open Files
-
-```
-# Navigation commands
-# Fuzzy find and navigate to directories or open files (uses global cache)
-f
-# Fuzzy find and navigate to files/directories recursively from current directory
-fr
-
-# Editor commands
-# Find and open files specifically with Zed
-fz
-# Find and open files specifically with Neovim
-fv
-```
-
-When you use `f` or `fr`, selecting a directory will automatically change to it, while selecting a file will open it in your system's default application. The difference is that `f` searches through your cached paths (potentially your entire home directory), while `fr` only searches recursively from your current directory.
-
-### Process Management
-
-```
-# Interactively select and kill processes
-fKill
-```
 
 ## Cache System
 
@@ -140,7 +114,7 @@ The script uses a cache system to dramatically improve performance whenever poss
 
 ```
 # Update the cache manually
-fCache
+fc
 
 # Set up automatic cache updates with cron
 0 */2 * * * ~/path/to/fzf/fzf.sh --update-cache > /dev/null 2>&1
