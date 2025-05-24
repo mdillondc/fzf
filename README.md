@@ -65,12 +65,15 @@ For Zed, download from the [official website](https://zed.dev) as it's not in re
 
 After installation, you can immediately:
 
-1. Navigate files and directories with `f`
-2. Open files in Zed editor with `fz`
-3. Open files in Neovim with `fv`
-4. Search file contents with `fSearchZed`
-5. Kill processes with `fKill`
-6. Run `fHelp` for more options than listed in README.md (`fHelp` will always be more up-to-date than README.md)
+1. Navigate files and directories:
+   - From cached paths with `f`
+   - Recursively from current directory with `fr`
+2. Open files with editors:
+   - In Zed editor with `fz`
+   - In Neovim with `fv`
+3. Search file contents with `fSearchZed`
+4. Kill processes with `fKill`
+5. Run `fHelp` for more options than listed in README.md (`fHelp` will always be more up-to-date than README.md)
 
 Run `fHelp` to view all available commands and shortcuts.
 
@@ -86,6 +89,7 @@ COMMAND                   ALIAS                DESCRIPTION
 --help                    fHelp                Show this help message
 --update-cache            fCache               Update the file/directory path cache
 --open                    f                    Fuzzy find and open files with default system app or cd to directory
+--open-recursive          fr                   Fuzzy find and open files recursively from current directory
 --open-zed                fz                   Fuzzy find and open files with Zed
 --open-nvim               fv                   Fuzzy find and open files with Neovim
 --path                    fp                   Return a selected path from fuzzy finder
@@ -101,17 +105,20 @@ COMMAND                   ALIAS                DESCRIPTION
 ### Navigate and Open Files
 
 ```
-# Fuzzy find and navigate to directories or open files
+# Navigation commands
+# Fuzzy find and navigate to directories or open files (uses global cache)
 f
+# Fuzzy find and navigate to files/directories recursively from current directory
+fr
 
+# Editor commands
 # Find and open files specifically with Zed
 fz
-
 # Find and open files specifically with Neovim
 fv
 ```
 
-When you use `f`, selecting a directory will automatically change to it, while selecting a file will open it in your systems default application.
+When you use `f` or `fr`, selecting a directory will automatically change to it, while selecting a file will open it in your system's default application. The difference is that `f` searches through your cached paths (potentially your entire home directory), while `fr` only searches recursively from your current directory.
 
 ### Process Management
 
