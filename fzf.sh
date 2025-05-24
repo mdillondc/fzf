@@ -27,11 +27,12 @@ RESET="\033[0m"
 
 # Define all aliases and functions when script is sourced
 if [[ "$SOURCED" = true ]]; then
-    # Define all the aliases
-    alias fHelp="$SCRIPT_PATH --help"
-    alias fCache="$SCRIPT_PATH --update-cache"
+    # Define all aliases
+    alias fh="$SCRIPT_PATH --help"
+    alias fc="$SCRIPT_PATH --update-cache"
     alias fp="$SCRIPT_PATH --path"
-    alias fKill="$SCRIPT_PATH --kill"
+    alias fk="$SCRIPT_PATH --kill"
+    alias fr="$SCRIPT_PATH --open-recursive"
     alias fz="$SCRIPT_PATH --open-zed"
     alias fv="$SCRIPT_PATH --open-nvim"
     
@@ -48,22 +49,34 @@ if [[ "$SOURCED" = true ]]; then
         fi
     }
     
-    fSearchZed() {
+    fr() {
+        local result
+        result=$("$SCRIPT_PATH" --open-recursive)
+        
+        # If it's a directory path (result starts with "Directory selected:")
+        if echo "$result" | grep -q "Directory selected:"; then
+            # Extract just the path (last line)
+            local dir=$(echo "$result" | tail -n 1)
+            cd "$dir"
+        fi
+    }
+    
+    fsz() {
         local query="${1:-}"  # Use $1 if provided, otherwise empty string
         "$SCRIPT_PATH" --search-zed "$query"
     }
     
-    fSearchVim() {
+    fsv() {
         local query="${1:-}"  # Use $1 if provided, otherwise empty string
         "$SCRIPT_PATH" --search-nvim "$query"
     }
     
-    fSearchRelZed() {
+    fsrz() {
         local query="${1:-}"  # Use $1 if provided, otherwise empty string
         "$SCRIPT_PATH" --search-rel-zed "$query"
     }
     
-    fSearchRelVim() {
+    fsrv() {
         local query="${1:-}"  # Use $1 if provided, otherwise empty string
         "$SCRIPT_PATH" --search-rel-nvim "$query"
     }
@@ -84,17 +97,18 @@ show_help() {
     printf "${BOLD}%-25s %-20s %-45s${RESET}\n" "-------" "-----" "-----------"
     
     # Commands with perfectly aligned columns using printf
-    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--help" "fHelp" "Show this help message"
-    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--update-cache" "fCache" "Update the file/directory path cache"
+    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--help" "fh" "Show this help message"
+    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--update-cache" "fc" "Update the file/directory path cache"
     printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--open" "f" "Fuzzy find and open files with default system app or cd to directory"
+    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--open-recursive" "fr" "Fuzzy find and open files recursively from current directory"
     printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--open-zed" "fz" "Fuzzy find and open files with Zed"
     printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--open-nvim" "fv" "Fuzzy find and open files with Neovim"
     printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--path" "fp" "Return a selected path from fuzzy finder"
-    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--kill" "fKill" "List and kill any process"
-    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--search-zed" "fSearchZed" "Search file contents and open in Zed"
-    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--search-nvim" "fSearchVim" "Search file contents and open in Neovim"
-    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--search-rel-zed" "fSearchRelZed" "Search recursively in current directory, open in Zed"
-    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--search-rel-nvim" "fSearchRelVim" "Search recursively in current directory, open in Neovim"
+    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--kill" "fk" "List and kill any process"
+    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--search-zed" "fsz" "Search file contents and open in Zed"
+    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--search-nvim" "fsv" "Search file contents and open in Neovim"
+    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--search-rel-zed" "fsrz" "Search recursively in current directory, open in Zed"
+    printf "${GREEN}%-25s${RESET} ${YELLOW}%-20s${RESET} %-45s\n" "--search-rel-nvim" "fsrv" "Search recursively in current directory, open in Neovim"
 }
 
 # Function to update cache
@@ -204,15 +218,21 @@ fuzzy_open() {
     local use_nvim=$1
     local use_zed=$2
     local use_default_app=$3
+    local recursive=$4
     
-    # Check if cache exists
-    if [[ ! -r "$CACHE_FILE" ]]; then
-        echo "Cache file not found or not readable: $CACHE_FILE" >&2
-        exit 1
-    fi
+    if [[ "$recursive" = true ]]; then
+        # Use find to get all files and directories recursively from current directory
+        selected_path=$(find . -type f -o -type d 2>/dev/null | sort | fzf)
+    else
+        # Check if cache exists
+        if [[ ! -r "$CACHE_FILE" ]]; then
+            echo "Cache file not found or not readable: $CACHE_FILE" >&2
+            exit 1
+        fi
 
-    # Tell fzf to read null-delimited input from the cache
-    selected_path=$(cat "$CACHE_FILE" | fzf --read0)
+        # Tell fzf to read null-delimited input from the cache
+        selected_path=$(cat "$CACHE_FILE" | fzf --read0)
+    fi
 
     # Check if fzf was cancelled (e.g., ESC pressed)
     if [ $? -ne 0 ]; then
@@ -387,13 +407,16 @@ case "$1" in
         fuzzy_path
         ;;
     --open)
-        fuzzy_open false false true
+        fuzzy_open false false true false
+        ;;
+    --open-recursive)
+        fuzzy_open false false true true
         ;;
     --open-nvim)
-        fuzzy_open true false false
+        fuzzy_open true false false false
         ;;
     --open-zed)
-        fuzzy_open false true false
+        fuzzy_open false true false false
         ;;
     --kill)
         kill_process
