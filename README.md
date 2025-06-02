@@ -12,6 +12,7 @@ This README is written for Ubuntu/Debian, however it should work on other Linux 
 - Opening files with different editors (Zed, Neovim) - modify `fzf.sh` to use your preferred editors
 - Searching file contents
 - Process management / process kill
+- Application launching (commands, snaps, flatpaks, desktop apps)
 - Path caching for performance
 
 This script streamlines your workflow with a consistent interface for common operations, making it faster to navigate your filesystem, find and open files, and manage processes.
@@ -73,7 +74,8 @@ After installation, you can immediately:
    - In Neovim with `fv`
 3. Search file contents with `fsz`
 4. Kill processes with `fk`
-5. Run `fh` for more options than listed in README.md (`fh` will always be more up-to-date than README.md)
+5. Launch applications with `fl`
+6. Run `fh` for more options than listed in README.md (`fh` will always be more up-to-date than README.md)
 
 Run `fh` to view all available commands and shortcuts.
 
@@ -98,8 +100,25 @@ COMMAND                   ALIAS                DESCRIPTION
 --search-nvim             fsv                  Search file contents and open in Neovim
 --search-rel-zed          fsrz                 Search recursively in current directory, open in Zed
 --search-rel-nvim         fsrv                 Search recursively in current directory, open in Neovim
+--launcher                fl                   Application launcher for commands, snaps, flatpaks, and desktop apps
 ```
 
+
+## Application Launcher
+
+The `fl` command provides a unified interface to launch applications from multiple sources:
+
+- **Native Commands**: All commands available in your PATH
+- **Snap Packages**: Installed snap applications
+- **Flatpak Applications**: Installed flatpak apps
+- **Desktop Applications**: Apps with .desktop files (system and user locations)
+
+The launcher uses fzf to provide fuzzy searching with previews showing:
+- Command type and name
+- For desktop apps: Name, Comment, and Exec information
+- Launch commands for different package types
+
+Simply run `fl`, start typing to filter, and press Enter to launch the selected application.
 
 ## Cache System
 
