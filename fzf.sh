@@ -32,7 +32,6 @@ if [[ "$SOURCED" = true ]]; then
     alias fc="$SCRIPT_PATH --update-cache"
     alias fp="$SCRIPT_PATH --path"
     alias fk="$SCRIPT_PATH --kill"
-    alias fr="$SCRIPT_PATH --open-recursive"
     alias fz="$SCRIPT_PATH --open-zed"
     alias fv="$SCRIPT_PATH --open-nvim"
     alias fl="$SCRIPT_PATH --launcher"
